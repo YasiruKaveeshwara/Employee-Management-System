@@ -1,13 +1,14 @@
 package com.yasirukaveeshwara.employee_management.controller;
 
+import com.yasirukaveeshwara.employee_management.dto.ScheduleDto;
+import com.yasirukaveeshwara.employee_management.dto.UserDto;
 import com.yasirukaveeshwara.employee_management.entity.Schedule;
 import com.yasirukaveeshwara.employee_management.entity.User;
-import com.yasirukaveeshwara.employee_management.repository.ScheduleRepository;
-import com.yasirukaveeshwara.employee_management.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yasirukaveeshwara.employee_management.service.ScheduleService;
+import com.yasirukaveeshwara.employee_management.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -17,61 +18,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
+    private final ScheduleService scheduleService;
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    // ✅ Create a new employee
     @PostMapping("/employee")
-    public ResponseEntity<?> createEmployee(@RequestBody User user) {
-        user.setRole(User.Role.EMPLOYEE);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return ResponseEntity.ok(userRepository.save(user));
+    public ResponseEntity<?> createEmployee(@RequestBody UserDto dto) {
+        User user = User.builder()
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .phone(dto.getPhone())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .role(User.Role.EMPLOYEE)
+                .build();
+        return ResponseEntity.ok(userService.createEmployee(user));
     }
 
-    // ✅ Get all employees
     @GetMapping("/employees")
     public List<User> getAllEmployees() {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getRole() == User.Role.EMPLOYEE)
-                .toList();
+        return userService.getAllEmployees();
     }
 
-    // ✅ Update employee
     @PutMapping("/employee/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody User updatedUser) {
-        return userRepository.findById(id).map(user -> {
-            user.setName(updatedUser.getName());
-            user.setEmail(updatedUser.getEmail());
-            user.setPhone(updatedUser.getPhone());
-            return ResponseEntity.ok(userRepository.save(user));
-        }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody UserDto dto) {
+        return ResponseEntity.ok(userService.updateEmployee(id, dto));
     }
 
-    // ✅ Delete employee
     @DeleteMapping("/employee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
-        userRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        userService.deleteUserById(id);
+        return ResponseEntity.ok("Deleted employee with ID: " + id);
     }
 
-    // ✅ Assign schedule to an employee
     @PostMapping("/schedule/{userId}")
     public ResponseEntity<?> assignSchedule(
             @PathVariable Long userId,
             @RequestParam Date date,
             @RequestParam String shiftType) {
 
-        LocalTime start;
-        LocalTime end;
-
+        LocalTime start, end;
         switch (shiftType.toUpperCase()) {
             case "DAY" -> {
                 start = LocalTime.of(6, 0);
@@ -83,21 +71,20 @@ public class AdminController {
             }
             case "NIGHT" -> {
                 start = LocalTime.of(22, 0);
-                end = LocalTime.of(6, 0); // next day
+                end = LocalTime.of(6, 0);
             }
             default -> {
                 return ResponseEntity.badRequest().body("Invalid shift type.");
             }
         }
 
-        Schedule schedule = Schedule.builder()
-                .user(userRepository.findById(userId).orElseThrow())
-                .date(date)
-                .shiftType(shiftType.toUpperCase())
-                .startTime(start)
-                .endTime(end)
-                .build();
+        Schedule schedule = new Schedule();
+        schedule.setUser(userService.getUserById(userId));
+        schedule.setDate(date);
+        schedule.setShiftType(shiftType.toUpperCase());
+        schedule.setStartTime(start);
+        schedule.setEndTime(end);
 
-        return ResponseEntity.ok(scheduleRepository.save(schedule));
+        return ResponseEntity.ok(scheduleService.assignSchedule(schedule));
     }
 }

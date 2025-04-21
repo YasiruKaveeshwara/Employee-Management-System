@@ -1,5 +1,6 @@
 package com.yasirukaveeshwara.employee_management.service;
 
+import com.yasirukaveeshwara.employee_management.dto.UserDto;
 import com.yasirukaveeshwara.employee_management.entity.User;
 import com.yasirukaveeshwara.employee_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,27 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    public User updateEmployee(Long id, UserDto dto) {
+    User user = getUserById(id);
+    user.setName(dto.getName());
+    user.setEmail(dto.getEmail());
+    user.setPhone(dto.getPhone());
+    return userRepository.save(user);
+}
+
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+    }
+    
+
 }

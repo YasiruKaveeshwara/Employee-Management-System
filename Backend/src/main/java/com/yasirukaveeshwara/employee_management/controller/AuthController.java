@@ -5,34 +5,36 @@ import com.yasirukaveeshwara.employee_management.dto.LoginRequest;
 import com.yasirukaveeshwara.employee_management.dto.LoginResponse;
 import com.yasirukaveeshwara.employee_management.entity.User;
 import com.yasirukaveeshwara.employee_management.repository.UserRepository;
+import com.yasirukaveeshwara.employee_management.service.AuthService;
+
+import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElse(null);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        Optional<User> optionalUser = authService.validateUser(request.getUsername(), request.getPassword());
 
-        if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).body("Invalid username or password");
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
 
+        User user = optionalUser.get();
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+
         return ResponseEntity.ok(new LoginResponse(token, user.getRole().name()));
     }
 }
