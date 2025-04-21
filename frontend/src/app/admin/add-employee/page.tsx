@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-const BASE_URL = "http://localhost:8081";
+import api from "@/app/lib/api"; // ✅ Import pre-configured Axios instance
 
 export default function AddEmployeePage() {
   const router = useRouter();
@@ -30,33 +29,15 @@ export default function AddEmployeePage() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${BASE_URL}/api/admin/employee`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        let errorMessage = "Server Error";
-        try {
-          const result = await res.json();
-          console.error("Server responded with:", result);
-          errorMessage = result.message || errorMessage;
-        } catch {
-          console.error("Non-JSON error from server.");
-        }
-        throw new Error(errorMessage);
+      const res = await api.post("/admin/employee", form);
+      if (res.status === 200 || res.status === 201) {
+        router.push("/admin/dashboard");
+      } else {
+        throw new Error("Unexpected server response");
       }
-
-      router.push("/admin/dashboard");
     } catch (err: any) {
-      console.error(err.message);
-      setError(err.message || "Something went wrong.");
+      console.error("Server Error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to create employee.");
     } finally {
       setLoading(false);
     }

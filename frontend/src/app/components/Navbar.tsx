@@ -10,7 +10,8 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
 
-  useEffect(() => {
+  // Sync with localStorage values
+  const syncAuth = () => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("role");
     if (token) {
@@ -18,13 +19,31 @@ const Navbar = () => {
       setRole(userRole || "");
     } else {
       setIsLoggedIn(false);
+      setRole("");
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    syncAuth();
+
+    const handleStorageChange = () => syncAuth();
+    const handleCustomAuthUpdate = () => syncAuth();
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("auth-updated", handleCustomAuthUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("auth-updated", handleCustomAuthUpdate);
+    };
+  }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     setIsLoggedIn(false);
+    setRole("");
+    window.dispatchEvent(new Event("auth-updated")); // 🔄 notify others
     router.push("/");
   };
 
@@ -38,17 +57,10 @@ const Navbar = () => {
       </h1>
 
       <nav className='space-x-6 flex items-center'>
-        <Link href='/' className={linkClass("/")}>
-          Home
-        </Link>
-
         {isLoggedIn && role === "ADMIN" && (
           <>
             <Link href='/admin/dashboard' className={linkClass("/admin/dashboard")}>
               Dashboard
-            </Link>
-            <Link href='/admin/add-employee' className={linkClass("/admin/add-employee")}>
-              Employees
             </Link>
             <Link href='/admin/scheduling' className={linkClass("/admin/scheduling")}>
               Scheduling
@@ -68,6 +80,12 @@ const Navbar = () => {
               Attendance
             </Link>
           </>
+        )}
+
+        {isLoggedIn && (
+          <Link href='/profile' className={linkClass("/profile")}>
+            Profile
+          </Link>
         )}
 
         {isLoggedIn ? (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../lib/api";
 import { useRouter } from "next/navigation";
 import { LoginRequest, LoginResponse } from "../types/auth";
@@ -15,6 +15,19 @@ export default function LoginPage() {
 
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (token && role) {
+      if (role === "ADMIN") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/employee/dashboard");
+      }
+    }
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -27,6 +40,8 @@ export default function LoginPage() {
 
       // ✅ Store token in localStorage or cookie
       localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      window.dispatchEvent(new Event("auth-updated")); // 🚀 trigger sync
 
       if (role === "ADMIN") {
         router.push("/admin/dashboard");
