@@ -18,7 +18,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User createEmployee(User user) {
+    public User createUser(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists: " + user.getUsername());
         }
@@ -26,12 +26,10 @@ public class UserService {
         return userRepository.save(user);
     }
     
+    
 
     public List<User> getAllEmployees() {
-        return userRepository.findAll()
-                .stream()
-                .filter(u -> u.getRole() == User.Role.EMPLOYEE)
-                .toList();
+        return userRepository.findAll();
     }
 
     public User getUserById(Long id) {
@@ -59,6 +57,8 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
+
+    
     
 
 }

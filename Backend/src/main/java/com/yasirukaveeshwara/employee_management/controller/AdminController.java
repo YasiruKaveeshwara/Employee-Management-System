@@ -26,17 +26,27 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/employee")
-    public ResponseEntity<?> createEmployee(@RequestBody UserDto dto) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto dto) {
+        User.Role role;
+        try {
+            role = User.Role.valueOf(dto.getRole().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid role: " + dto.getRole());
+        }
+
         User user = User.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .username(dto.getUsername())
                 .password(dto.getPassword())
-                .role(User.Role.EMPLOYEE)
+                .role(role) // ✅ Use the role sent from frontend
                 .build();
-        return ResponseEntity.ok(userService.createEmployee(user));
+
+                return ResponseEntity.ok(userService.createUser(user));
+
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/employees")
@@ -56,6 +66,13 @@ public class AdminController {
         userService.deleteUserById(id);
         return ResponseEntity.ok("Deleted employee with ID: " + id);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/schedules")
+    public ResponseEntity<?> getAllSchedules() {
+        return ResponseEntity.ok(scheduleService.getAllSchedules());
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/schedule/{userId}")
@@ -92,4 +109,43 @@ public class AdminController {
 
         return ResponseEntity.ok(scheduleService.assignSchedule(schedule));
     }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/profile")
+    public ResponseEntity<?> getAdminProfile(java.security.Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(401).body("Unauthorized: No authenticated user found");
+        }
+
+        try {
+            User user = userService.getUserByUsername(principal.getName());
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("User not found: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateAdminProfile(@RequestBody UserDto dto, java.security.Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(401).body("Unauthorized: No authenticated user");
+        }
+
+        try {
+            User user = userService.getUserByUsername(principal.getName());
+            user.setName(dto.getName());
+            user.setEmail(dto.getEmail());
+            user.setPhone(dto.getPhone());
+
+            userService.updateUser(user);
+            return ResponseEntity.ok("Profile updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update profile: " + e.getMessage());
+        }
+    }
+
+
+    
 }

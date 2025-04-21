@@ -29,7 +29,10 @@ export default function AddEmployeePage() {
     setLoading(true);
 
     try {
+      // Display a success message or log success
+      console.log("Employee added successfully");
       const res = await api.post("/admin/employee", form);
+      
       if (res.status === 200 || res.status === 201) {
         router.push("/admin/dashboard");
       } else {

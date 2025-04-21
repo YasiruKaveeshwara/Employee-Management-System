@@ -37,10 +37,10 @@ export default function ProfilePage() {
         baseURL: `http://localhost:8081/api/${userRole.toLowerCase()}`
       });
       setProfile({
-        name: res.data.name,
-        email: res.data.email,
-        phone: res.data.phone,
-        username: res.data.username,
+        name: res.data.name || "",
+        email: res.data.email || "",
+        phone: res.data.phone || "",
+        username: res.data.username || "",
       });
     } catch (err) {
       console.error(err);

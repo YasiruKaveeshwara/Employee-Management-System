@@ -26,4 +26,9 @@ public class ScheduleService {
     public List<Schedule> getSchedulesForUserOnDate(User user, Date date) {
         return scheduleRepository.findByUserAndDate(user, date);
     }
+
+    public List<Schedule> getAllSchedules() {
+        return scheduleRepository.findAll(); // or customize with sorting/filtering
+    }
+    
 }
