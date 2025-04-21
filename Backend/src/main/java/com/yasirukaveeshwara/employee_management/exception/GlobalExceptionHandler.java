@@ -1,6 +1,8 @@
 package com.yasirukaveeshwara.employee_management.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,9 +27,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex, HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("💥 Server Error: " + ex.getMessage());
+    public ResponseEntity<?> handleException(Exception ex, HttpServletRequest request) {
+        ex.printStackTrace(); // ✅ Log to console
+        return ResponseEntity.status(500).body(Map.of("message", ex.getMessage()));
     }
 }

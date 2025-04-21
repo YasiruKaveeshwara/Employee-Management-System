@@ -5,5 +5,5 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token: string;
-  role: 'ADMIN' | 'EMPLOYEE';
+  role: "ADMIN" | "EMPLOYEE";
 }
