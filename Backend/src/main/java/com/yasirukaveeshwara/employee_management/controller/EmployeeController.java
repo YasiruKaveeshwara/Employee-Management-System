@@ -52,4 +52,12 @@ public class EmployeeController {
             default -> ResponseEntity.badRequest().body("Invalid type. Use IN or OUT.");
         };
     }
+
+    @GetMapping("/attendance")
+    public ResponseEntity<?> getAttendanceHistory(Principal principal) {
+        User user = userService.getUserByUsername(principal.getName());
+        return ResponseEntity.ok(attendanceService.getAttendanceForUser(user));
+    }
+
+
 }

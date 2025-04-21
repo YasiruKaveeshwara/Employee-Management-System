@@ -64,6 +64,7 @@ export default function ProfilePage() {
         baseURL: `http://localhost:8081/api/${role.toLowerCase()}`
       });
       setSuccess("Profile updated successfully!");
+      
     } catch (err) {
       console.error(err);
       setError("Update failed");

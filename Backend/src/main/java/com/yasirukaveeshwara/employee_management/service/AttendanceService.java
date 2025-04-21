@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,4 +41,11 @@ public class AttendanceService {
         a.setOutTime(new Date());
         return attendanceRepository.save(a);
     }
+
+ 
+
+public List<Attendance> getAttendanceForUser(User user) {
+    return attendanceRepository.findAllByUserOrderByDateDesc(user);
+}
+
 }

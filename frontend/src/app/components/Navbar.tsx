@@ -73,12 +73,7 @@ const Navbar = () => {
             <Link href='/employee/dashboard' className={linkClass("/employee/dashboard")}>
               Dashboard
             </Link>
-            <Link href='/employee/schedules' className={linkClass("/employee/schedules")}>
-              Schedules
-            </Link>
-            <Link href='/employee/attendance' className={linkClass("/employee/attendance")}>
-              Attendance
-            </Link>
+            
           </>
         )}
 
