@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -39,8 +40,10 @@ const Navbar = () => {
   }, [pathname]);
 
   const logout = () => {
+    Cookies.remove("token");
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    
     setIsLoggedIn(false);
     setRole("");
     window.dispatchEvent(new Event("auth-updated")); // 🔄 notify others

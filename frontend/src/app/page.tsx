@@ -24,5 +24,5 @@ export default function HomePage() {
     }
   }, []);
 
-  return null; // no UI here
+  return null; 
 }

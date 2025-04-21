@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import api from "../lib/api";
 import { useRouter } from "next/navigation";
 import { LoginRequest, LoginResponse } from "../types/auth";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function LoginPage() {
       // ✅ Store token in localStorage or cookie
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
+      Cookies.set("token", token, { expires: 1 });
       window.dispatchEvent(new Event("auth-updated")); // 🚀 trigger sync
 
       if (role === "ADMIN") {
