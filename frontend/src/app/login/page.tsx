@@ -23,7 +23,10 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const res = await api.post<LoginResponse>("/auth/login", formData);
-      const { role } = res.data;
+      const { role, token } = res.data;
+
+      // ✅ Store token in localStorage or cookie
+      localStorage.setItem("token", token);
 
       if (role === "ADMIN") {
         router.push("/admin/dashboard");
