@@ -68,6 +68,12 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/employee/{id}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/schedules")
     public ResponseEntity<?> getAllSchedules() {
         return ResponseEntity.ok(scheduleService.getAllSchedules());

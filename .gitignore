@@ -39,6 +39,9 @@ target/
 *.iws
 *.iml
 *.ipr
+package-lock.json
+.log
+*.log
 
 ### NetBeans ###
 /nbproject/private/
@@ -52,3 +55,4 @@ build/
 
 ### VS Code ###
 .vscode/
+frontend/package-lock.json

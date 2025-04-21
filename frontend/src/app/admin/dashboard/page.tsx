@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../../lib/api";
+import { FiEdit, FiTrash2 } from "react-icons/fi"; // Optional: install react-icons
 
 interface Employee {
   id: number;
@@ -31,6 +32,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this employee?")) return;
+
+    try {
+      await api.delete(`/admin/employee/${id}`);
+      setEmployees(employees.filter((emp) => emp.id !== id));
+    } catch (err) {
+      console.error("Failed to delete employee:", err);
+      alert("Could not delete the employee.");
+    }
+  };
+
   useEffect(() => {
     fetchEmployees();
   }, []);
@@ -49,7 +62,6 @@ export default function AdminDashboard() {
 
         {loading && <p className='text-gray-600'>Loading employees...</p>}
         {error && <p className='text-red-500 text-sm'>{error}</p>}
-
         {!loading && !error && employees.length === 0 && <p className='text-gray-500'>No employees found.</p>}
 
         {!loading && !error && employees.length > 0 && (
@@ -62,6 +74,7 @@ export default function AdminDashboard() {
                   <th className='p-3'>Phone</th>
                   <th className='p-3'>Username</th>
                   <th className='p-3'>Role</th>
+                  <th className='p-3'>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -72,6 +85,16 @@ export default function AdminDashboard() {
                     <td className='p-3'>{emp.phone}</td>
                     <td className='p-3'>{emp.username}</td>
                     <td className='p-3 capitalize'>{emp.role}</td>
+                    <td className='p-3 flex gap-6'>
+                      <button
+                        onClick={() => router.push(`/admin/edit-employee/${emp.id}`)}
+                        className='text-blue-600 hover:text-blue-800 font-medium text-sm'>
+                        <FiEdit size={18} />
+                      </button>
+                      <button onClick={() => handleDelete(emp.id)} className='text-red-600 hover:text-red-800' title='Delete Employee'>
+                        <FiTrash2 size={18} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
