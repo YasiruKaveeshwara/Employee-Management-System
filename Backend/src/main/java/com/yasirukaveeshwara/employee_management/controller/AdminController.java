@@ -1,12 +1,13 @@
 package com.yasirukaveeshwara.employee_management.controller;
 
-import com.yasirukaveeshwara.employee_management.dto.ScheduleDto;
 import com.yasirukaveeshwara.employee_management.dto.UserDto;
 import com.yasirukaveeshwara.employee_management.entity.Schedule;
 import com.yasirukaveeshwara.employee_management.entity.User;
 import com.yasirukaveeshwara.employee_management.service.ScheduleService;
 import com.yasirukaveeshwara.employee_management.service.UserService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
-@PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class AdminController {
 
     private final UserService userService;
     private final ScheduleService scheduleService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/employee")
     public ResponseEntity<?> createEmployee(@RequestBody UserDto dto) {
         User user = User.builder()
@@ -37,26 +38,30 @@ public class AdminController {
         return ResponseEntity.ok(userService.createEmployee(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/employees")
     public List<User> getAllEmployees() {
         return userService.getAllEmployees();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/employee/{id}")
     public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody UserDto dto) {
         return ResponseEntity.ok(userService.updateEmployee(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/employee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok("Deleted employee with ID: " + id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/schedule/{userId}")
     public ResponseEntity<?> assignSchedule(
             @PathVariable Long userId,
-            @RequestParam Date date,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
             @RequestParam String shiftType) {
 
         LocalTime start, end;

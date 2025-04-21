@@ -19,9 +19,13 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User createEmployee(User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists: " + user.getUsername());
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+    
 
     public List<User> getAllEmployees() {
         return userRepository.findAll()

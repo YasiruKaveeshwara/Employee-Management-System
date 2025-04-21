@@ -4,16 +4,13 @@ import com.yasirukaveeshwara.employee_management.config.JwtUtil;
 import com.yasirukaveeshwara.employee_management.dto.LoginRequest;
 import com.yasirukaveeshwara.employee_management.dto.LoginResponse;
 import com.yasirukaveeshwara.employee_management.entity.User;
-import com.yasirukaveeshwara.employee_management.repository.UserRepository;
 import com.yasirukaveeshwara.employee_management.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
