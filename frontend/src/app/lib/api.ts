@@ -5,7 +5,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// 🔐 Add Bearer token to every request if available
+// Add Bearer token to every request if available
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {

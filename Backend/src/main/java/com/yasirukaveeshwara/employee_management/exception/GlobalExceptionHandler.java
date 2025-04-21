@@ -16,19 +16,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body("❌ Access Denied: " + ex.getMessage());
+                .body(" Access Denied: " + ex.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("⚠️ Runtime Error: " + ex.getMessage());
+                .body(" Runtime Error: " + ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex, HttpServletRequest request) {
-        ex.printStackTrace(); // ✅ Log to console
+        ex.printStackTrace(); // Log to console
         return ResponseEntity.status(500).body(Map.of("message", ex.getMessage()));
     }
 }

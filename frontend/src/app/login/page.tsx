@@ -43,7 +43,7 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       Cookies.set("token", token, { expires: 1 });
-      window.dispatchEvent(new Event("auth-updated")); // 🚀 trigger sync
+      window.dispatchEvent(new Event("auth-updated")); //  trigger sync
 
       if (role === "ADMIN") {
         router.push("/admin/dashboard");

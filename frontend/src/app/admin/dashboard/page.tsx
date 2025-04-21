@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../../lib/api";
-import { FiEdit, FiTrash2 } from "react-icons/fi"; // Optional: install react-icons
+import { FiEdit, FiTrash2 } from "react-icons/fi"; 
 
 interface Employee {
   id: number;

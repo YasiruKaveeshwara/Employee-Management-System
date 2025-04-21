@@ -1,4 +1,3 @@
-// src/app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
@@ -12,10 +11,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-[#f7faff] text-gray-800 min-h-screen flex flex-col">
+    <html lang='en'>
+      <body className='bg-[#f7faff] text-gray-800 min-h-screen flex flex-col'>
         <Navbar />
-        <main className="flex-grow px-6 py-4">{children}</main>
+        <main className='flex-grow px-6 py-4'>{children}</main>
         <Footer />
       </body>
     </html>

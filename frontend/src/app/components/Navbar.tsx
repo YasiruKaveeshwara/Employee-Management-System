@@ -46,7 +46,7 @@ const Navbar = () => {
     
     setIsLoggedIn(false);
     setRole("");
-    window.dispatchEvent(new Event("auth-updated")); // 🔄 notify others
+    window.dispatchEvent(new Event("auth-updated")); // notify others
     router.push("/");
   };
 

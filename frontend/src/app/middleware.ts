@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -9,9 +8,7 @@ export function middleware(request: NextRequest) {
 
   const protectedRoutes = ["/admin", "/employee", "/profile"];
 
-  const isProtected = protectedRoutes.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isProtected = protectedRoutes.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (isProtected && !token) {
     url.pathname = "/login";

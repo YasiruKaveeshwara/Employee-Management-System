@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/app/lib/api"; // ✅ Import pre-configured Axios instance
+import api from "@/app/lib/api"; 
 
 export default function AddEmployeePage() {
   const router = useRouter();

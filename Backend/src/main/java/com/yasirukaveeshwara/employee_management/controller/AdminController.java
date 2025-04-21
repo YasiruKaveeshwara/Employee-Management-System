@@ -40,7 +40,7 @@ public class AdminController {
                 .phone(dto.getPhone())
                 .username(dto.getUsername())
                 .password(dto.getPassword())
-                .role(role) // ✅ Use the role sent from frontend
+                .role(role) //  Use the role sent from frontend
                 .build();
 
                 return ResponseEntity.ok(userService.createUser(user));
