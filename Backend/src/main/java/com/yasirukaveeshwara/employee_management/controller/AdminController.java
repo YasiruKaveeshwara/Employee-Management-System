@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -97,8 +98,24 @@ public class AdminController {
     @PostMapping("/schedule/{userId}")
     public ResponseEntity<?> assignSchedule(
             @PathVariable Long userId,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam String shiftType) {
+
+        if (date == null) {
+            return ResponseEntity.badRequest().body("Date is required.");
+        }
+
+        if (!List.of("DAY", "AFTERNOON", "NIGHT").contains(shiftType.toUpperCase())) {
+            return ResponseEntity.badRequest().body("Invalid shift type. Use DAY, AFTERNOON, or NIGHT.");
+        }
+
+        User user = userService.getUserById(userId);
+
+        // Prevent assigning multiple schedules for same day
+        boolean alreadyScheduled = !scheduleService.getSchedulesForUserOnDate(user, date).isEmpty();
+        if (alreadyScheduled) {
+            return ResponseEntity.badRequest().body("User is already scheduled for this date.");
+        }
 
         LocalTime start, end;
         switch (shiftType.toUpperCase()) {
@@ -120,7 +137,7 @@ public class AdminController {
         }
 
         Schedule schedule = new Schedule();
-        schedule.setUser(userService.getUserById(userId));
+        schedule.setUser(user);
         schedule.setDate(date);
         schedule.setShiftType(shiftType.toUpperCase());
         schedule.setStartTime(start);
@@ -128,6 +145,7 @@ public class AdminController {
 
         return ResponseEntity.ok(scheduleService.assignSchedule(schedule));
     }
+
 
 
     @PreAuthorize("hasRole('ADMIN')")

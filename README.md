@@ -65,6 +65,25 @@ A modern **Employee Management System** built with:
 
 ## 🔧 Setup Instructions
 
+### 🛠️ Configuration
+
+Create a `application.properties` file in the `backend/src/main/resources` directory of the backend project with the following content:
+
+```properties
+spring.application.name=employee-management
+spring.datasource.url= <your postgresql url (jdbc:postgresql://localhost:5432/employee_management)>
+spring.datasource.username= <your username (default: postgres)>
+spring.datasource.password= <your password>
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+jwt.secret=<your hash>
+server.port=8081
+```
+
+Ensure that PostgreSQL is running and a database named `employee_management` is created before starting the backend.
+
 ### 🚀 Backend Setup (Spring Boot)
 
 ```bash

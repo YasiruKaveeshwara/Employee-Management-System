@@ -6,6 +6,7 @@ import com.yasirukaveeshwara.employee_management.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ScheduleService {
         return scheduleRepository.findByUser(user);
     }
 
-    public List<Schedule> getSchedulesForUserOnDate(User user, Date date) {
+    public List<Schedule> getSchedulesForUserOnDate(User user, LocalDate date) {
         return scheduleRepository.findByUserAndDate(user, date);
     }
 

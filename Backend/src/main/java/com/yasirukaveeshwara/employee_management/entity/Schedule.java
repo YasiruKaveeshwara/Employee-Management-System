@@ -3,6 +3,7 @@ package com.yasirukaveeshwara.employee_management.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -23,8 +24,7 @@ public class Schedule {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDate date;
 
     private String shiftType;
 
