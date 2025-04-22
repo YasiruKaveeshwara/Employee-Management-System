@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.time.LocalTime;
 import java.util.Date;
@@ -56,9 +58,20 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/employee/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody UserDto dto) {
+    public ResponseEntity<?> updateEmployee(
+            @PathVariable Long id,
+            @Valid @RequestBody UserDto dto,
+            BindingResult result) {
+        
+        if (result.hasErrors()) {
+            StringBuilder errors = new StringBuilder();
+            result.getAllErrors().forEach(e -> errors.append(e.getDefaultMessage()).append("; "));
+            return ResponseEntity.badRequest().body(errors.toString());
+        }
+
         return ResponseEntity.ok(userService.updateEmployee(id, dto));
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/employee/{id}")
