@@ -104,6 +104,13 @@ npm run dev
 
 * Runs on `http://localhost:3000`
 
+### 🔑 Default Admin Credentials
+
+The default admin credentials for initial login are:
+
+* **Username:** `admin`
+* **Password:** `admin`
+
 ## 🌐 API Overview
 
 ### 🔒 Authentication
