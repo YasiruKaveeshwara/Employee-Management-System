@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/app/lib/api"; 
+import api from "@/app/lib/api";
 
 export default function AddEmployeePage() {
   const router = useRouter();
@@ -27,13 +27,30 @@ export default function AddEmployeePage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
+    // Basic validations
+    if (!form.name || !form.email || !form.phone || !form.username || !form.password) {
+      setError("All fields are required.");
+      setLoading(false);
+      return;
+    }
+  
+    if (!/^\d{10}$/.test(form.phone)) {
+      setError("Phone number must be 10 digits.");
+      setLoading(false);
+      return;
+    }
+  
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError("Invalid email format.");
+      setLoading(false);
+      return;
+    }
+  
     try {
-      // Display a success message or log success
-      console.log("Employee added successfully");
       const res = await api.post("/admin/employee", form);
-      
       if (res.status === 200 || res.status === 201) {
+        alert("Employee added successfully!");
         router.push("/admin/dashboard");
       } else {
         throw new Error("Unexpected server response");
@@ -45,6 +62,7 @@ export default function AddEmployeePage() {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className='min-h-screen bg-blue-50 px-8 py-6'>

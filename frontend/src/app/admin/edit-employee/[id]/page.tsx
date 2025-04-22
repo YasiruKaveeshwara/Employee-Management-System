@@ -18,6 +18,7 @@ export default function EditEmployeePage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const loadEmployee = async () => {
     try {
@@ -42,6 +43,7 @@ export default function EditEmployeePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     // Basic validations
     if (!form.name || !form.email || !form.phone || !form.role) {
@@ -61,7 +63,11 @@ export default function EditEmployeePage() {
 
     try {
       await api.put(`/admin/employee/${employeeId}`, form);
-      router.push("/admin/dashboard");
+      setSuccess("Employee updated successfully!");
+
+      setTimeout(() => {
+        router.push("/admin/dashboard");
+      }, 1500); // 1.5s delay
     } catch {
       setError("Failed to update employee.");
     }
@@ -122,6 +128,8 @@ export default function EditEmployeePage() {
             </div>
 
             {error && <p className='text-red-500 text-sm'>{error}</p>}
+            {success && <p className='text-green-600 text-sm'>{success}</p>}
+
 
             <button type='submit' className='bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded'>
               Save Changes
